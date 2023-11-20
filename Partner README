@@ -1,0 +1,78 @@
+process_data(data)
+This function takes a single argument, data, and processes it based on its value. The function returns a dictionary with a "result" key indicating the outcome of the processing.
+
+receive_data(client_socket)
+This function is responsible for receiving data from a client socket. It continuously receives data in chunks of 1024 bytes until it detects the special termination string b"__END_OF_TRANSMISSION__". It then deserializes the received data using pickle and returns the deserialized object.
+
+start_server()
+This is the main function that sets up the server. It performs the following steps:
+
+Create a Socket: Creates a socket using the socket module with IPv4 addressing (AF_INET) and TCP protocol (SOCK_STREAM).
+
+Bind the Socket: Binds the socket to a specific address (127.0.0.1 or localhost) and port (12345).
+
+Listen for Connections: Puts the server in a listening state, allowing it to accept incoming connections. It can queue up to 5 connection requests.
+
+Accept Connections in a Loop: Enters a loop to wait for incoming connections. When a connection is established, it prints the client's address.
+
+Receive and Process Data: Calls the receive_data function to get data from the client, then processes the data using the process_data function.
+
+Send Result to Client: Serializes the result using pickle and sends it back to the client.
+
+Close Connection: Closes the connection with the client.
+
+Close Server Socket: Closes the server socket when the loop is exited.
+
+__main__ Block
+The script checks if it is being run as the main program (__name__ == "__main__") and, if so, calls the start_server() function to initiate the server.
+
+Usage
+Run the script to start the server.
+Clients can connect to the server and send data for processing.
+The server processes the data and sends the result back to the clients.
+The server continues to listen for incoming connections until manually terminated.
+
+How to Send data to the server
+exanmple call
+ 
+def send_data(client_socket, data):
+    # Send the data to the server
+    client_socket.send(pickle.dumps(data) + b"__END_OF_TRANSMISSION__")
+
+How to recive data from the server
+example call 
+
+def receive_result(client_socket):
+    # Receive and return the server's response
+    return pickle.loads(client_socket.recv(1024))
+
+
+UML DIAGRAM
+
+Client                 Server
+  |                       |
+  |    CONNECT            |
+  |---------------------->|  LISTEN
+  |                       |
+  |                       |
+  |                       |
+  |                       |
+  |    SEND_DATA          |
+  |---------------------->|  ACCEPT
+  |                       |
+  |    RECEIVE_DATA       |
+  |<----------------------|  
+  |    PROCESS_DATA       |
+  |                       |
+  |    SEND_RESULT        |
+  |---------------------->|  
+  |                       |
+  |                       |
+  |    CLOSE_CONNECTION   |
+  |---------------------->|  
+  |   ACK_CLOSE_CONNECTION|
+  |<----------------------|  
+  |                       |
+  |                       |
+  |    CLOSE CONNECTION   |
+  |<----------------------|
